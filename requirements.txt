@@ -1,4 +1,4 @@
-selenium
+selenium==4.2
 pyautogui
 webdriver_manager
 PyYAML
