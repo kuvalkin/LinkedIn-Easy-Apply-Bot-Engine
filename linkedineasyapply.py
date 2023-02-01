@@ -53,7 +53,9 @@ class LinkedinEasyApply:
         page_source = self.browser.page_source
 
         if '/checkpoint/challenge/' in current_url or 'security check' in page_source:
-            input("Please complete the security check and press enter in this console when it is done.")
+            code = input("Please enter the code for security check. It will be used to complete the challenge")
+            self.browser.find_element_by_tag_name("input").send_keys(code)
+            self.browser.find_element_by_css_selector(".btn__primary--large").click()
             time.sleep(random.uniform(5.5, 10.5))
 
     def start_applying(self):
@@ -121,11 +123,11 @@ class LinkedinEasyApply:
             raise Exception("No more jobs on this page")
 
         try:
-            job_results = self.browser.find_element_by_class_name("jobs-search-results")
+            job_results = self.browser.find_element_by_class_name("jobs-search-results-list")
             self.scroll_slow(job_results)
             self.scroll_slow(job_results, step=300, reverse=True)
 
-            job_list = self.browser.find_elements_by_class_name('jobs-search-results__list')[0].find_elements_by_class_name('jobs-search-results__list-item')
+            job_list = self.browser.find_elements_by_class_name('jobs-search-results-list')[0].find_elements_by_class_name('jobs-search-results__list-item')
         except:
             raise Exception("No more jobs on this page")
 
@@ -236,7 +238,7 @@ class LinkedinEasyApply:
                     next_button.click()
                     time.sleep(random.uniform(3.0, 5.0))
 
-                    if 'please enter a valid answer' in self.browser.page_source.lower() or 'file is required' in self.browser.page_source.lower():
+                    if 'enter a valid' in self.browser.page_source.lower() or 'file is required' in self.browser.page_source.lower():
                         retries -= 1
                         print("Retrying application, attempts left: " + str(retries))
                     else:
@@ -373,7 +375,7 @@ class LinkedinEasyApply:
 
                     txt_field_visible = False
                     try:
-                        txt_field = question.find_element_by_class_name('fb-single-line-text__input')
+                        txt_field = question.find_element_by_tag_name('input')
 
                         txt_field_visible = True
                     except:
@@ -457,7 +459,7 @@ class LinkedinEasyApply:
                     question = el.find_element_by_class_name('jobs-easy-apply-form-element')
                     question_text = question.find_element_by_class_name('fb-form-element-label').text.lower()
 
-                    dropdown_field = question.find_element_by_class_name('fb-dropdown__select')
+                    dropdown_field = question.find_element_by_tag_name('select')
 
                     select = Select(dropdown_field)
 
@@ -620,14 +622,15 @@ class LinkedinEasyApply:
                 text = el.text.lower()
                 if 'email address' in text:
                     continue
-                elif 'phone number' in text:
+                elif 'country code' in text:
                     try:
-                        country_code_picker = el.find_element_by_class_name('fb-dropdown__select')
+                        country_code_picker = el.find_element_by_tag_name('select')
                         self.select_dropdown(country_code_picker, self.personal_info['Phone Country Code'])
                     except:
                         print("Country code " + self.personal_info['Phone Country Code'] + " not found! Make sure it is exact.")
+                elif 'phone number' in text:
                     try:
-                        phone_number_field = el.find_element_by_class_name('fb-single-line-text__input')
+                        phone_number_field = el.find_element_by_tag_name('input')
                         self.enter_text(phone_number_field, self.personal_info['Mobile Phone Number'])
                     except:
                         print("Could not input phone number.")
