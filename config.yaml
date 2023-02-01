@@ -3,6 +3,9 @@ password: yourpassword
 
 disableAntiLock: False
 
+# add here a link to a remote driver if you want to use it. For example, 'http://localhost:4444/wd/hub' 
+remoteDriver: '' 
+
 remote: False
 
 experienceLevel:

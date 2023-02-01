@@ -5,7 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from linkedineasyapply import LinkedinEasyApply
 from validate_email import validate_email
 
-def init_browser():
+def init_browser(remoteDriver: str):
     browser_options = Options()
     options = ['--disable-blink-features', '--no-sandbox', '--start-maximized', '--disable-extensions',
                '--ignore-certificate-errors', '--disable-blink-features=AutomationControlled']
@@ -13,7 +13,13 @@ def init_browser():
     for option in options:
         browser_options.add_argument(option)
 
-    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=browser_options)
+    if remoteDriver == '':
+        driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=browser_options)
+    else:
+        driver = webdriver.Remote(
+            command_executor=remoteDriver,
+            options=browser_options
+        )
 
     driver.set_window_position(0, 0)
     driver.maximize_window()
@@ -115,12 +121,14 @@ def validate_yaml():
     for survey_question in eeo:
         assert eeo[survey_question] != ''
 
+    assert isinstance(parameters['remoteDriver'], str)
+
     return parameters
 
 
 if __name__ == '__main__':
     parameters = validate_yaml()
-    browser = init_browser()
+    browser = init_browser(parameters['remoteDriver'])
 
     bot = LinkedinEasyApply(parameters, browser)
     bot.login()
