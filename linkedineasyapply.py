@@ -1,4 +1,4 @@
-import time, random, csv, pyautogui, pdb, traceback, sys
+import time, random, csv, pdb, traceback, sys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -683,6 +683,8 @@ class LinkedinEasyApply:
     def avoid_lock(self):
         if self.disable_lock:
             return
+
+        import pyautogui
 
         pyautogui.keyDown('ctrl')
         pyautogui.press('esc')
